@@ -34,4 +34,4 @@ jobs:
           git commit -m "Add tweets collected on $(date)"
           git push
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BEARER_TOKEN: ${{ secrets.BEARER_TOKEN }}
