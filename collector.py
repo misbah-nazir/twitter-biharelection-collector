@@ -3,20 +3,15 @@ import tweepy
 import pandas as pd
 from datetime import datetime, timezone
 
-# Get Bearer Token from environment
 BEARER_TOKEN = os.getenv("BEARER_TOKEN")
 if not BEARER_TOKEN:
     raise Exception("❌ No BEARER_TOKEN found. Please set it as a GitHub Secret.")
 
-# Initialize Tweepy client
 client = tweepy.Client(bearer_token=BEARER_TOKEN, wait_on_rate_limit=True)
 
-# Query parameters
 QUERY = "Biharelection OR Biharvoting OR Biharpolling lang:en"
-MAX_RESULTS = 20  # small batch to prevent long runs
-DATA_DIR = "data"  # folder to save CSVs
-
-# Create folder if it doesn't exist
+MAX_RESULTS = 20
+DATA_DIR = "data"
 os.makedirs(DATA_DIR, exist_ok=True)
 
 def collect_tweets():
@@ -55,11 +50,14 @@ def collect_tweets():
 
 if __name__ == "__main__":
     data = collect_tweets()
-    if not data:
-        print("⚠️ No tweets collected this run.")
-    else:
+    tweet_count = len(data)
+    print(f"📊 Collected {tweet_count} tweets this run.")
+
+    if tweet_count > 0:
         df = pd.DataFrame(data)
         now = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M")
         filename = os.path.join(DATA_DIR, f"tweets_{now}.csv")
         df.to_csv(filename, index=False)
-        print(f"✅ Saved {len(df)} tweets to {filename}")
+        print(f"✅ Saved {tweet_count} tweets to {filename}")
+    else:
+        print("⚠️ No tweets collected this run.")
