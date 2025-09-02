@@ -32,19 +32,19 @@ jobs:
         env:
           BEARER_TOKEN: ${{ secrets.BEARER_TOKEN }}
 
-      # Step 5: Commit & push new CSVs safely
+      # Step 5: Commit & push CSVs safely
       - name: Commit & push CSVs safely
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Check if CSV files exist
+          # Ensure CSV files exist
           CSV_FILES=$(ls data/*.csv 2>/dev/null || true)
 
           if [ -n "$CSV_FILES" ]; then
             git add data/*.csv
 
-            # Only commit if there are changes
+            # Only commit if changes exist
             if git diff --cached --quiet; then
               echo "No new CSVs to commit"
             else
