@@ -38,19 +38,18 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Ensure CSV files exist
+          # Check if CSV files exist
           CSV_FILES=$(ls data/*.csv 2>/dev/null || true)
 
           if [ -n "$CSV_FILES" ]; then
             git add data/*.csv
 
-            # Only commit if changes exist
-            git diff --cached --quiet
-            if [ $? -ne 0 ]; then
+            # Commit only if there are changes
+            if git diff --cached --quiet; then
+              echo "No new CSVs to commit"
+            else
               git commit -m "Add tweets collected on $(date)"
               git push
-            else
-              echo "No new CSVs to commit"
             fi
           else
             echo "No CSV files found, skipping commit."
