@@ -3,17 +3,23 @@ import tweepy
 import pandas as pd
 from datetime import datetime, timezone
 
+# -------------------------
+# Setup
+# -------------------------
 BEARER_TOKEN = os.getenv("BEARER_TOKEN")
 if not BEARER_TOKEN:
     raise Exception("❌ No BEARER_TOKEN found. Please set it as a GitHub Secret.")
 
-client = tweepy.Client(bearer_token=BEARER_TOKEN, wait_on_rate_limit=True)
+client = tweepy.Client(bearer_token=BEARER_TOKEN)
 
-QUERY = "Biharelection OR Biharvoting OR Biharpolling lang:en"
-MAX_RESULTS = 20
+QUERY = "Biharelection OR Biharvoting OR Biharpolling OR bihardemocratic2025 lang:en"
+MAX_RESULTS = 20  # small batch to avoid rate limits
 DATA_DIR = "data"
 os.makedirs(DATA_DIR, exist_ok=True)
 
+# -------------------------
+# Collect tweets
+# -------------------------
 def collect_tweets():
     tweets = []
     try:
@@ -48,16 +54,19 @@ def collect_tweets():
 
     return tweets
 
+# -------------------------
+# Save tweets to CSV
+# -------------------------
 if __name__ == "__main__":
     data = collect_tweets()
-    tweet_count = len(data)
-    print(f"📊 Collected {tweet_count} tweets this run.")
+    count = len(data)
+    print(f"📊 Collected {count} tweets this run.")
 
-    if tweet_count > 0:
+    if count > 0:
         df = pd.DataFrame(data)
-        now = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M")
-        filename = os.path.join(DATA_DIR, f"tweets_{now}.csv")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M")
+        filename = os.path.join(DATA_DIR, f"tweets_{timestamp}.csv")
         df.to_csv(filename, index=False)
-        print(f"✅ Saved {tweet_count} tweets to {filename}")
+        print(f"✅ Saved {count} tweets to {filename}")
     else:
         print("⚠️ No tweets collected this run.")
