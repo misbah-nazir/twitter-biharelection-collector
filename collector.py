@@ -8,11 +8,12 @@ from datetime import datetime, timezone
 # -------------------------
 BEARER_TOKEN = os.getenv("BEARER_TOKEN")
 if not BEARER_TOKEN:
-    raise Exception("❌ No BEARER_TOKEN found. Please set it as a GitHub Secret.")
+    print("❌ No BEARER_TOKEN found. Skipping this run.")
+    exit(0)  # exit safely without error
 
 client = tweepy.Client(bearer_token=BEARER_TOKEN)
 
-QUERY = "Biharelection OR Biharvoting OR Biharpolling OR bihardemocratic2025 lang:en"
+QUERY = "Biharelection OR Biharvoting OR Biharpolling lang:en"
 MAX_RESULTS = 20  # small batch to avoid rate limits
 DATA_DIR = "data"
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -45,10 +46,10 @@ def collect_tweets():
                     "likes": tweet.public_metrics["like_count"]
                 })
 
-    except tweepy.errors.TooManyRequests:
-        print("⚠️ Rate limit reached. Skipping this run.")
     except tweepy.errors.Unauthorized:
         print("❌ Unauthorized! Check your BEARER_TOKEN.")
+    except tweepy.errors.TooManyRequests:
+        print("⚠️ Rate limit reached. Skipping this run.")
     except Exception as e:
         print(f"⚠️ Unexpected error: {e}")
 
