@@ -50,7 +50,6 @@ jobs:
             else
               git commit -m "Add tweets collected on $(date)"
               git push
-            fi
           else
             echo "No CSV files found, skipping commit."
         env:
