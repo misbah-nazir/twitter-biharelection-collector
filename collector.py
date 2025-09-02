@@ -12,7 +12,7 @@ if not BEARER_TOKEN:
 client = tweepy.Client(bearer_token=BEARER_TOKEN, wait_on_rate_limit=True)
 
 # Query parameters
-QUERY = "Biharelection OR Biharvoting OR Biharpolling OR bihardemocratic2025 lang:en"
+QUERY = "Biharelection OR Biharvoting OR Biharpolling lang:en"
 MAX_RESULTS = 20  # small batch to prevent long runs
 DATA_DIR = "data"  # folder to save CSVs
 
